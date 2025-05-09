@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
+from flask_cors import CORS
 
 app = Flask(__name__)
-
+CORS(app,origins=["http://localhost:3000"])
 # Load data
 data = pd.read_csv("./random_user_product_mapping.csv")
 user_ids = data.iloc[:, 0].values
@@ -27,6 +28,7 @@ def recommend():
     target_vector = product_vectors[target_idx]
     mask = (target_vector == 0) & (neighbor_vector > 0)
     recommendations = product_names[mask].tolist()[:5]
+    print(recommendations)
 
     return jsonify({
         "user": user_id,
@@ -34,4 +36,6 @@ def recommend():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    print(user_ids)
+    app.run(host='0.0.0.0', port=5000)
+
